@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Globalization;
+using System.Linq;
+using UserManagement.Models;
 using UserManagement.Services.Domain.Interfaces;
 using UserManagement.Web.Models.Users;
 
@@ -31,4 +33,33 @@ public class UsersController : Controller
 
         return View(model);
     }
+
+    [HttpGet("add-user")]
+    public ViewResult AddUser()
+    {
+        return View();
+    }
+
+    [HttpPost("add-user")]
+    public ActionResult AddUser(UserAddViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var user = new User
+        {
+            Forename = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(model.Forename.ToLower()),
+            Surname = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(model.Surname.ToLower()),
+            Email = model.Email,
+            IsActive = model.IsActive,
+            DateOfBirth = model.DateOfBirth
+        };
+
+        _userService.Add(user);
+
+        return RedirectToAction("List");
+    }
+
 }
