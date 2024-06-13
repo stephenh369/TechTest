@@ -23,6 +23,29 @@ public class UserControllerTests
             .Which.Items.Should().BeEquivalentTo(users);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void List_WhenCalledWithActiveStatus_ReturnsUsersWithMatchingActiveStatus(bool activeStatus)
+    {
+        // Arrange
+        var controller = CreateController();
+        var activeUsers = SetupUsers(isActive: true);
+        var nonActiveUsers = SetupUsers(isActive: false);
+
+        _userService
+            .Setup(s => s.FilterByActive(activeStatus))
+            .Returns(activeStatus ? activeUsers : nonActiveUsers);
+
+        // Act
+        var result = controller.List(activeStatus);
+
+        // Assert
+        result.Model
+            .Should().BeOfType<UserListViewModel>()
+            .Which.Items.Should().BeEquivalentTo(activeStatus ? activeUsers : nonActiveUsers);
+    }
+
     private User[] SetupUsers(string forename = "Johnny", string surname = "User", string email = "juser@example.com", bool isActive = true)
     {
         var users = new[]
