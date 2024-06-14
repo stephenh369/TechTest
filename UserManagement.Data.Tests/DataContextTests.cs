@@ -1,11 +1,39 @@
+using System;
 using System.Linq;
-using FluentAssertions;
 using UserManagement.Models;
 
 namespace UserManagement.Data.Tests;
 
 public class DataContextTests
 {
+
+    [Fact]
+    public void Create_WhenCalledWithUser_CreatesUser()
+    {
+        // Arrange
+        var context = CreateContext();
+        var user = new User
+        {
+            Forename = "John",
+            Surname = "Doe",
+            Email = "jdoe@example.com",
+            IsActive = true,
+            DateOfBirth = new DateTime(1980, 1, 1)
+        };
+
+        // Act
+        context.Create(user);
+
+        // Assert
+        var result = context.GetAll<User>();
+        result.Should().Contain(u =>
+            u.Forename == user.Forename &&
+            u.Surname == user.Surname &&
+            u.Email == user.Email &&
+            u.IsActive == user.IsActive &&
+            u.DateOfBirth == user.DateOfBirth);
+    }
+
     [Fact]
     public void GetAll_WhenNewEntityAdded_MustIncludeNewEntity()
     {

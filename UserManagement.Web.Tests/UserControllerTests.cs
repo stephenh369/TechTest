@@ -1,3 +1,4 @@
+using System;
 using UserManagement.Models;
 using UserManagement.Services.Domain.Interfaces;
 using UserManagement.Web.Models.Users;
@@ -44,6 +45,32 @@ public class UserControllerTests
         result.Model
             .Should().BeOfType<UserListViewModel>()
             .Which.Items.Should().BeEquivalentTo(activeStatus ? activeUsers : nonActiveUsers);
+    }
+
+    [Fact]
+    public void AddUser_WhenCalledWithUser_AddsUser()
+    {
+        // Arrange
+        var controller = CreateController();
+        var user = new UserAddViewModel
+        {
+            Forename = "John",
+            Surname = "Doe",
+            Email = "jdoe@example.com",
+            IsActive = true,
+            DateOfBirth = new DateTime(1980, 1, 1)
+        };
+
+        // Act
+        var result = controller.AddUser(user);
+
+        // Assert
+        _userService.Verify(s => s.Add(It.Is<User>(u =>
+            u.Forename == user.Forename &&
+            u.Surname == user.Surname &&
+            u.Email == user.Email &&
+            u.IsActive == user.IsActive &&
+            u.DateOfBirth == user.DateOfBirth)), Times.Once);
     }
 
     private User[] SetupUsers(string forename = "Johnny", string surname = "User", string email = "juser@example.com", bool isActive = true)
