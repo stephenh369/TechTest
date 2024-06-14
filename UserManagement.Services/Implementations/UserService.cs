@@ -28,4 +28,8 @@ public class UserService : IUserService
     {
         return _dataAccess.GetById<User>(id);
     }
+    public void Edit(User updatedUser)
+    {
+        _dataAccess.Update(updatedUser);
+    }
 }

@@ -1,35 +1,37 @@
-@model UserManagement.Web.Models.Users.UserAddViewModel
+@model UserManagement.Web.Models.Users.UserEditViewModel
 
-<h2 class="mb-4">Add User</h2>
+<h2 class="mb-4">Edit User</h2>
 
-<form asp-action="AddUser" asp-controller="Users" method="post">
+<form asp-action="Edit" asp-controller="Users" method="post">
+    @Html.HiddenFor(model => model.Id)
     <div class="form-group row-cols-2">
         <label for="Forename" class="col-sm-2 col-form-label">Forename:</label>
-        <input id="Forename" name="Forename" type="text" asp-for="Forename" />
+        <input id="Forename" name="Forename" type="text" asp-for="Forename" value="@Model.Forename" />
         <span asp-validation-for="Forename" class="ml-4 text-danger"></span>
     </div>
     <div class="form-group row-cols-2">
         <label for="Surname" class="col-sm-2 col-form-label">Surname:</label>
-        <input id="Surname" name="Surname" type="text" asp-for="Surname" />
+        <input id="Surname" name="Surname" type="text" asp-for="Surname" value="@Model.Surname" />
         <span asp-validation-for="Surname" class="ml-4 text-danger"></span>
     </div>
     <div class="form-group row-cols-2">
         <label for="Email" class="col-sm-2 col-form-label">Email:</label>
-        <input id="Email" name="Email" type="email" asp-for="Email" />
+        <input id="Email" name="Email" type="email" asp-for="Email" value="@Model.Email" />
         <span asp-validation-for="Email" class="ml-4 text-danger"></span>
     </div>
     <div class="form-group">
         <label for="IsActive" class="col-sm-2 col-form-label">Active:</label>
-        <input id="IsActive" name="IsActive" type="checkbox" asp-for="IsActive" />
+        <input id="IsActive" name="IsActive" type="checkbox" asp-for="IsActive" checked="@Model.IsActive" />
     </div>
     <div class="form-group row-cols-8">
         <label for="DateOfBirth" class="col-sm-2 col-form-label">Date of Birth:</label>
-        <input id="DateOfBirth" name="DateOfBirth" type="date" asp-for="DateOfBirth" />
+        <input id="DateOfBirth" name="DateOfBirth" type="date" asp-for="DateOfBirth"
+            value="@Model.DateOfBirth.ToString("yyyy-MM-dd")" />
         <span asp-validation-for="DateOfBirth" class="ml-4 text-danger"></span>
     </div>
     <div class="form-group row mt-4">
         <div class="col-sm-10">
-            <button type="submit" class="btn btn-primary">Add User</button>
+            <button type="submit" class="btn btn-primary">Update</button>
         </div>
     </div>
 </form>

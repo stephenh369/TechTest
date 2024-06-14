@@ -34,14 +34,14 @@ public class UsersController : Controller
         return View(model);
     }
 
-    [HttpGet("add-user")]
-    public ViewResult AddUser()
+    [HttpGet("add")]
+    public ViewResult Add()
     {
         return View();
     }
 
-    [HttpPost("add-user")]
-    public ActionResult AddUser(UserAddViewModel model)
+    [HttpPost("add")]
+    public ActionResult Add(UserAddViewModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -77,6 +77,48 @@ public class UsersController : Controller
         };
 
         return View(viewModel);
+    }
+
+    [HttpGet("edit")]
+    public ActionResult Edit([FromQuery] long id)
+    {
+        var user = _userService.GetById(id);
+
+        var editModel = new UserEditViewModel
+        {
+            Forename = user.Forename,
+            Surname = user.Surname,
+            Email = user.Email,
+            IsActive = user.IsActive,
+            DateOfBirth = user.DateOfBirth
+        };
+
+        return View(editModel);
+    }
+
+    [HttpPost("edit")]
+    public ActionResult Edit(UserEditViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var user = _userService.GetById(model.Id);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        user.Forename = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(model.Forename.ToLower());
+        user.Surname = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(model.Surname.ToLower());
+        user.Email = model.Email;
+        user.IsActive = model.IsActive;
+        user.DateOfBirth = model.DateOfBirth;
+
+        _userService.Edit(user);
+
+        return RedirectToAction("List");
     }
 
 }
