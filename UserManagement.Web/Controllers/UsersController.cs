@@ -62,4 +62,21 @@ public class UsersController : Controller
         return RedirectToAction("List");
     }
 
+    [HttpGet("view")]
+    public ActionResult View([FromQuery] long id)
+    {
+        var user = _userService.GetById(id);
+
+        var viewModel = new UserViewModel
+        {
+            Forename = user.Forename,
+            Surname = user.Surname,
+            Email = user.Email,
+            IsActive = user.IsActive,
+            DateOfBirth = user.DateOfBirth
+        };
+
+        return View(viewModel);
+    }
+
 }

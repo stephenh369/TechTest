@@ -24,4 +24,8 @@ public class UserService : IUserService
     {
         _dataAccess.Create(user);
     }
+    public User GetById(long id)
+    {
+        return _dataAccess.GetById<User>(id);
+    }
 }

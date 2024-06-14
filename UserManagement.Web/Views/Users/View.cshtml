@@ -1,0 +1,21 @@
+@model UserManagement.Web.Models.Users.UserViewModel
+
+<div class="container">
+    <h1 class="mb-4">@Model.Forename @Model.Surname</h1>
+
+    <div class="row-cols-2">
+        <div class="pb-2">
+            <h4 class="fw-bold">Email:</h4>
+            <p>@Model.Email</p>
+        </div>
+        <div class="pb-2">
+            <h4 class="fw-bold">Active:</h4>
+            <p>@(Model.IsActive ? "Yes" : "No")</p>
+        </div>
+        <div class="pb-2">
+            <h4 class="fw-bold">Date of Birth:</h4>
+            <p>@Model.DateOfBirth.ToString("dd/MM/yyyy")</p>
+        </div>
+        <a class="btn btn-primary" asp-controller="users" asp-action="Index">Return to User List</a>
+    </div>
+</div>
