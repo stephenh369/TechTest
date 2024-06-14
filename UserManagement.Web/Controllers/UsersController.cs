@@ -63,7 +63,7 @@ public class UsersController : Controller
     }
 
     [HttpGet("view")]
-    public ActionResult View([FromQuery] long id)
+    public ViewResult View([FromQuery] long id)
     {
         var user = _userService.GetById(id);
 
@@ -80,7 +80,7 @@ public class UsersController : Controller
     }
 
     [HttpGet("edit")]
-    public ActionResult Edit([FromQuery] long id)
+    public ViewResult Edit([FromQuery] long id)
     {
         var user = _userService.GetById(id);
 
@@ -121,4 +121,31 @@ public class UsersController : Controller
         return RedirectToAction("List");
     }
 
+    [HttpGet("delete-confirm")]
+    public ViewResult DeleteConfirm([FromQuery] long id)
+    {
+        var user = _userService.GetById(id);
+
+        var deleteModel = new UserDeleteViewModel
+        {
+            Forename = user.Forename,
+            Surname = user.Surname,
+        };
+
+        return View(deleteModel);
+    }
+
+    [HttpPost("delete")]
+    public ActionResult Delete(long id)
+    {
+        var user = _userService.GetById(id);
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        _userService.Delete(user);
+
+        return RedirectToAction("List");
+    }
 }

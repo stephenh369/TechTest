@@ -48,7 +48,8 @@
                                         asp-route-id="@item.Id">View</a></li>
                                 <li><a class="dropdown-item" asp-controller="Users" asp-action="Edit"
                                         asp-route-id="@item.Id">Edit</a></li>
-                                <li><a class="dropdown-item" href="#">Delete</a></li>
+                                <li><a class="dropdown-item" asp-controller="Users" asp-action="DeleteConfirm"
+                                        asp-route-id="@item.Id">Delete</a></li>
                             </ul>
                         </div>
                     </td>
