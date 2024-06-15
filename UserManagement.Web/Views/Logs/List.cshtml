@@ -1,0 +1,27 @@
+@model UserManagement.Web.Models.Logs.UserLogListViewModel
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Action</th>
+                <th>Action Date</th>
+                <th>Additional Info</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in Model.Items)
+            {
+                <tr>
+                    <td>@log.UserId</td>
+                    <td>@log.Forename @log.Surname</td>
+                    <td>@log.Action</td>
+                    <td>@log.ActionDate</td>
+                    <td>@log.AdditionalInfo</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

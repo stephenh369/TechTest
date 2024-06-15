@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UserManagement.Data;
 using UserManagement.Models;
@@ -9,7 +10,12 @@ namespace UserManagement.Services.Domain.Implementations;
 public class UserService : IUserService
 {
     private readonly IDataContext _dataAccess;
-    public UserService(IDataContext dataAccess) => _dataAccess = dataAccess;
+    private readonly ILogsService _logsService;
+    public UserService(IDataContext dataAccess, ILogsService logsService)
+    {
+        _dataAccess = dataAccess;
+        _logsService = logsService;
+    }
 
     /// <summary>
     /// Return users by active state
@@ -23,17 +29,38 @@ public class UserService : IUserService
     public void Add(User user)
     {
         _dataAccess.Create(user);
+        _logsService.LogUserAction(new UserActionLog
+        {
+            UserId = user.Id,
+            Forename = user.Forename,
+            Surname = user.Surname,
+            Action = "User created",
+            ActionDate = DateTime.Now,
+        });
     }
-    public User GetById(long id)
-    {
-        return _dataAccess.GetById<User>(id);
-    }
+    public User GetById(long id) => _dataAccess.GetById<User>(id);
     public void Edit(User updatedUser)
     {
         _dataAccess.Update(updatedUser);
+        _logsService.LogUserAction(new UserActionLog
+        {
+            UserId = updatedUser.Id,
+            Forename = updatedUser.Forename,
+            Surname = updatedUser.Surname,
+            Action = "User updated",
+            ActionDate = DateTime.Now
+        });
     }
     public void Delete(User user)
     {
         _dataAccess.Delete(user);
+        _logsService.LogUserAction(new UserActionLog
+        {
+            UserId = user.Id,
+            Forename = user.Forename,
+            Surname = user.Surname,
+            Action = "User deleted",
+            ActionDate = DateTime.Now
+        });
     }
 }

@@ -29,6 +29,7 @@ public class DataContext : DbContext, IDataContext
     });
 
     public DbSet<User>? Users { get; set; }
+    public DbSet<UserActionLog> UserActionLogs { get; set; }
 
     public IQueryable<TEntity> GetAll<TEntity>() where TEntity : class
         => base.Set<TEntity>();
@@ -52,4 +53,10 @@ public class DataContext : DbContext, IDataContext
     }
     public TEntity GetById<TEntity>(long id) where TEntity : class
         => base.Find<TEntity>(id) ?? throw new Exception($"Entity of type {typeof(TEntity).Name} with id {id} not found.");
+
+    public void LogUserAction(UserActionLog userActionLog)
+    {
+        base.Add(userActionLog);
+        SaveChanges();
+    }
 }
