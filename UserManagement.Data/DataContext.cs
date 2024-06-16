@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using UserManagement.Models;
@@ -54,9 +55,27 @@ public class DataContext : DbContext, IDataContext
     public TEntity GetById<TEntity>(long id) where TEntity : class
         => base.Find<TEntity>(id) ?? throw new Exception($"Entity of type {typeof(TEntity).Name} with id {id} not found.");
 
-    public void LogUserAction(UserActionLog userActionLog)
+    public List<string> GetChangedProperties<TEntity>(TEntity originalEntity, TEntity newEntity) where TEntity : class
     {
-        base.Add(userActionLog);
-        SaveChanges();
+        var originalValues = base.Entry(originalEntity).OriginalValues;
+        var currentValues = base.Entry(newEntity).CurrentValues;
+        var changedProperties = new List<string>();
+
+        foreach (var property in originalValues.Properties)
+        {
+            var originalValue = originalValues[property];
+            var currentValue = currentValues[property];
+
+            if (!Equals(originalValue, currentValue))
+            {
+                if (originalValue is DateTime originalDate) originalValue = originalDate.ToString("dd/MM/yyyy");
+
+                if (currentValue is DateTime currentDate) currentValue = currentDate.ToString("dd/MM/yyyy");
+
+                changedProperties.Add($"{property.Name} changed from {originalValue} to {currentValue}");
+            }
+        }
+
+        return changedProperties;
     }
 }

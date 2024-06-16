@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using UserManagement.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace UserManagement.Data;
 
@@ -30,5 +30,5 @@ public interface IDataContext
 
     void Delete<TEntity>(TEntity entity) where TEntity : class;
     TEntity GetById<TEntity>(long id) where TEntity : class;
-    void LogUserAction(UserActionLog userActionLog);
+    List<string> GetChangedProperties<TEntity>(TEntity originalEntity, TEntity newEntity) where TEntity : class;
 }

@@ -41,6 +41,10 @@ public class UserService : IUserService
     public User GetById(long id) => _dataAccess.GetById<User>(id);
     public void Edit(User updatedUser)
     {
+        var changes = _dataAccess.GetChangedProperties(_dataAccess.GetById<User>(updatedUser.Id), updatedUser);
+
+        if (!changes.Any()) return;
+
         _dataAccess.Update(updatedUser);
         _logsService.LogUserAction(new UserActionLog
         {
@@ -48,7 +52,8 @@ public class UserService : IUserService
             Forename = updatedUser.Forename,
             Surname = updatedUser.Surname,
             Action = "User updated",
-            ActionDate = DateTime.Now
+            ActionDate = DateTime.Now,
+            AdditionalInfo = $"Updated with changes: {string.Join(", ", changes)}"
         });
     }
     public void Delete(User user)
