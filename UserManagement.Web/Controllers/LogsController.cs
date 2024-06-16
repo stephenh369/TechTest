@@ -1,4 +1,5 @@
 
+using System;
 using System.Linq;
 using UserManagement.Services.Domain.Interfaces;
 using UserManagement.Web.Models.Logs;
@@ -12,10 +13,12 @@ public class LogsController : Controller
     public LogsController(ILogsService logsService) => _logsService = logsService;
 
     [HttpGet]
-    public ViewResult List()
+    public ViewResult List(int page = 1)
     {
+        const int pageSize = 10;
         var logs = _logsService.GetAllLogs();
-        var items = logs.Select(log => new UserLogListItemViewModel
+        var items = logs.Skip((page - 1) * pageSize)
+        .Take(pageSize).Select(log => new UserLogListItemViewModel
         {
             Id = log.Id,
             Forename = log.Forename,
@@ -24,11 +27,17 @@ public class LogsController : Controller
             Action = log.Action,
             ActionDate = log.ActionDate,
             AdditionalInfo = log.AdditionalInfo
-        });
+        }).ToList();
+
+        var totalLogs = logs.Count();
+        var totalPages = (int)Math.Ceiling((double)totalLogs / pageSize);
 
         var model = new UserLogListViewModel
         {
-            Items = items.ToList()
+            Items = items,
+            CurrentPage = page,
+            PageSize = pageSize,
+            TotalPages = totalPages
         };
 
         return View(model);

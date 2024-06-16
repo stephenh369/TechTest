@@ -5,6 +5,9 @@ namespace UserManagement.Web.Models.Logs;
 public class UserLogListViewModel
 {
     public List<UserLogListItemViewModel> Items { get; set; } = new();
+    public int CurrentPage { get; set; }
+    public int TotalPages { get; set; }
+    public int PageSize { get; set; }
 }
 
 public class UserLogListItemViewModel
