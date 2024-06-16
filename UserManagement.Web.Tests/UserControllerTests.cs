@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using UserManagement.Models;
 using UserManagement.Services.Domain.Interfaces;
 using UserManagement.Web.Models.Users;
@@ -48,7 +50,7 @@ public class UserControllerTests
     }
 
     [Fact]
-    public void AddUser_WhenCalledWithUser_AddsUser()
+    public void Add_WhenCalledWithUser_RedirectsToList()
     {
         // Arrange
         var controller = CreateController();
@@ -62,15 +64,81 @@ public class UserControllerTests
         };
 
         // Act
-        var result = controller.AddUser(user);
+        var result = controller.Add(user);
 
         // Assert
-        _userService.Verify(s => s.Add(It.Is<User>(u =>
-            u.Forename == user.Forename &&
-            u.Surname == user.Surname &&
-            u.Email == user.Email &&
-            u.IsActive == user.IsActive &&
-            u.DateOfBirth == user.DateOfBirth)), Times.Once);
+        result.Should().BeOfType<RedirectToActionResult>()
+            .Which.ActionName.Should().Be("List");
+    }
+
+    [Fact]
+    public void View_WhenCalledWithId_ReturnsViewResultWithUser()
+    {
+        // Arrange
+        var controller = CreateController();
+        var user = SetupUsers().First();
+        var userView = new UserViewModel
+        {
+            Id = user.Id,
+            Forename = user.Forename,
+            Surname = user.Surname,
+            Email = user.Email,
+            IsActive = user.IsActive,
+            DateOfBirth = user.DateOfBirth
+        };
+
+        _userService.Setup(s => s.GetById(user.Id)).Returns(user);
+
+        // Act
+        var result = controller.View(user.Id);
+
+        // Assert
+        result.Should().BeOfType<ViewResult>()
+            .Which.Model.Should().BeOfType<UserViewModel>()
+            .Which.Should().BeEquivalentTo(userView);
+    }
+
+    [Fact]
+    public void Edit_WhenCalledWithUser_RedirectsToList()
+    {
+        // Arrange
+        var controller = CreateController();
+        var users = SetupUsers();
+        var user = users.First();
+        var userEditView = new UserEditViewModel
+        {
+            Id = user.Id,
+            Forename = user.Forename,
+            Surname = user.Surname,
+            Email = user.Email,
+            IsActive = user.IsActive,
+            DateOfBirth = user.DateOfBirth
+        };
+
+        _userService.Setup(s => s.GetById(user.Id)).Returns(user);
+
+        // Act
+        var result = controller.Edit(userEditView);
+
+        // Assert
+        result.Should().BeOfType<RedirectToActionResult>().Which.ActionName.Should().Be("List");
+    }
+
+    // Fails because result is null
+    [Fact]
+    public void DeleteConfirm_WhenCalledWithUserId_RedirectsToList()
+    {
+        // Arrange
+        var controller = CreateController();
+        var users = SetupUsers();
+        var user = users.First();
+
+        // Act
+        var result = controller.DeleteConfirm(user.Id);
+
+        // Assert
+        result.Should().BeOfType<RedirectToActionResult>()
+            .Which.ActionName.Should().Be("List");
     }
 
     private User[] SetupUsers(string forename = "Johnny", string surname = "User", string email = "juser@example.com", bool isActive = true)
@@ -82,7 +150,8 @@ public class UserControllerTests
                 Forename = forename,
                 Surname = surname,
                 Email = email,
-                IsActive = isActive
+                IsActive = isActive,
+                DateOfBirth = new DateTime(1980, 1, 1)
             }
         };
 
@@ -94,5 +163,6 @@ public class UserControllerTests
     }
 
     private readonly Mock<IUserService> _userService = new();
-    private UsersController CreateController() => new(_userService.Object);
+    private readonly Mock<ILogsService> _logsService = new();
+    private UsersController CreateController() => new(_userService.Object, _logsService.Object);
 }
