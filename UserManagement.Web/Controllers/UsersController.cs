@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using System.Linq;
+﻿using System.Linq;
 using UserManagement.Models;
 using UserManagement.Services.Domain.Interfaces;
 using UserManagement.Web.Models.Users;
@@ -38,8 +37,8 @@ public class UsersController : Controller
         return View(model);
     }
 
-    [HttpGet("add")]
-    public ViewResult Add()
+    [HttpGet("add-user")]
+    public ViewResult AddUser()
     {
         return View();
     }
@@ -54,8 +53,8 @@ public class UsersController : Controller
 
         var user = new User
         {
-            Forename = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(model.Forename.ToLower()),
-            Surname = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(model.Surname.ToLower()),
+            Forename = char.ToUpper(model.Forename[0]) + model.Forename.Substring(1),
+            Surname = char.ToUpper(model.Surname[0]) + model.Surname.Substring(1),
             Email = model.Email,
             IsActive = model.IsActive,
             DateOfBirth = model.DateOfBirth
@@ -95,8 +94,8 @@ public class UsersController : Controller
         return View(viewModel);
     }
 
-    [HttpGet("edit")]
-    public ViewResult Edit([FromQuery] long id)
+    [HttpGet("edit-user")]
+    public ViewResult EditUser([FromQuery] long id)
     {
         var user = _userService.GetById(id);
 
@@ -126,8 +125,8 @@ public class UsersController : Controller
             return NotFound();
         }
 
-        user.Forename = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(model.Forename.ToLower());
-        user.Surname = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(model.Surname.ToLower());
+        user.Forename = char.ToUpper(model.Forename[0]) + model.Forename.Substring(1);
+        user.Surname = char.ToUpper(model.Surname[0]) + model.Surname.Substring(1);
         user.Email = model.Email;
         user.IsActive = model.IsActive;
         user.DateOfBirth = model.DateOfBirth;
