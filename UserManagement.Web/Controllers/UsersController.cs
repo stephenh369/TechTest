@@ -10,8 +10,12 @@ namespace UserManagement.WebMS.Controllers;
 public class UsersController : Controller
 {
     private readonly IUserService _userService;
-    public UsersController(IUserService userService) => _userService = userService;
-
+    private readonly ILogsService _logsService;
+    public UsersController(IUserService userService, ILogsService logsService)
+    {
+        _userService = userService;
+        _logsService = logsService;
+    }
     [HttpGet]
     public ViewResult List(bool? activeStatus = null)
     {
@@ -67,13 +71,25 @@ public class UsersController : Controller
     {
         var user = _userService.GetById(id);
 
+        var userLogs = _logsService.GetAllLogs().Where(log => log.UserId == user.Id);
+
         var viewModel = new UserViewModel
         {
             Forename = user.Forename,
             Surname = user.Surname,
             Email = user.Email,
             IsActive = user.IsActive,
-            DateOfBirth = user.DateOfBirth
+            DateOfBirth = user.DateOfBirth,
+            UserActionLogs = userLogs.Select(log => new UserActionLog
+            {
+                Id = log.Id,
+                UserId = log.UserId,
+                Forename = log.Forename,
+                Surname = log.Surname,
+                Action = log.Action,
+                ActionDate = log.ActionDate,
+                AdditionalInfo = log.AdditionalInfo
+            }).ToList()
         };
 
         return View(viewModel);

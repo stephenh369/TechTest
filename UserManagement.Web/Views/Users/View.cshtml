@@ -16,6 +16,27 @@
             <h4 class="fw-bold">Date of Birth:</h4>
             <p>@Model.DateOfBirth.ToString("dd/MM/yyyy")</p>
         </div>
+
+        <table class="table table-striped my-4">
+        <thead>
+            <tr>
+                <th>Action</th>
+                <th>Action Date</th>
+                <th>Additional Info</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in Model.UserActionLogs)
+            {
+                <tr>
+                    <td>@log.Action</td>
+                    <td>@log.ActionDate.ToString("dd/MM/yyyy")</td>
+                    <td>@log.AdditionalInfo</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
         <a class="btn btn-primary" asp-controller="users" asp-action="Index">Return to User List</a>
     </div>
 </div>
