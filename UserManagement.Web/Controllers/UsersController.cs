@@ -48,7 +48,7 @@ public class UsersController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return View(model);
+            return View("AddUser", model);
         }
 
         var user = new User
@@ -116,7 +116,7 @@ public class UsersController : Controller
     {
         if (!ModelState.IsValid)
         {
-            return View(model);
+            return View("EditUser", model);
         }
 
         var user = _userService.GetById(model.Id);
