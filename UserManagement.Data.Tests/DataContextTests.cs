@@ -8,6 +8,105 @@ public class DataContextTests
 {
 
     [Fact]
+    public void GetChangedProperties_WhenCalledWithOriginalAndUpdatedUser_ReturnsChangedProperties()
+    {
+        // Arrange
+        var context = CreateContext();
+        var originalUser = new User
+        {
+            Forename = "John",
+            Surname = "Doe",
+            Email = "jdoe@example.com",
+            IsActive = true,
+            DateOfBirth = new DateTime(1980, 1, 1)
+        };
+        var updatedUser = new User
+        {
+            Forename = "Jane",
+            Surname = "Doe",
+            Email = "jdoe@example.com",
+            IsActive = true,
+            DateOfBirth = new DateTime(1980, 1, 1)
+        };
+
+        // Act
+        var result = context.GetChangedProperties(originalUser, updatedUser);
+
+        // Assert
+        result.Should().NotBeEmpty();
+        result.Should().Contain("Forename changed from John to Jane");
+    }
+
+    [Fact]
+    public void Delete_WhenCalledWithUserId_DeletesUser()
+    {
+        // Arrange
+        var context = CreateContext();
+        var user = new User
+        {
+            Forename = "John",
+            Surname = "Doe",
+            Email = "jdoe@example.com",
+            IsActive = true,
+            DateOfBirth = new DateTime(1980, 1, 1)
+        };
+        context.Create(user);
+
+        // Act
+        context.Delete(user);
+        var result = context.GetById<User>(user.Id);
+
+        // Assert
+        result.Should().BeNull();
+    }
+
+    [Fact]
+    public void Update_WhenCalledWithUser_UpdatesUser()
+    {
+        // Arrange
+        var context = CreateContext();
+        var user = new User
+        {
+            Forename = "John",
+            Surname = "Doe",
+            Email = "jdoe@example.com",
+            IsActive = true,
+            DateOfBirth = new DateTime(1980, 1, 1)
+        };
+        context.Create(user);
+
+        // Act
+        user.Forename = "Jane";
+        context.Update(user);
+        var result = context.GetById<User>(user.Id);
+
+        // Assert
+        result.Should().BeEquivalentTo(user);
+    }
+
+    [Fact]
+    public void GetById_WhenCalledWithUserId_ReturnsUser()
+    {
+        // Arrange
+        var context = CreateContext();
+        var user = new User
+        {
+            Forename = "John",
+            Surname = "Doe",
+            Email = "jdoe@example.com",
+            IsActive = true,
+            DateOfBirth = new DateTime(1980, 1, 1)
+        };
+        context.Create(user);
+
+        // Act
+        var result = context.GetById<User>(user.Id);
+
+        // Assert
+        result.Should().BeEquivalentTo(user);
+    }
+
+    [Fact]
     public void Create_WhenCalledWithUser_CreatesUser()
     {
         // Arrange

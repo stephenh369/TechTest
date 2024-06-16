@@ -29,6 +29,6 @@ public interface IDataContext
     void Update<TEntity>(TEntity entity) where TEntity : class;
 
     void Delete<TEntity>(TEntity entity) where TEntity : class;
-    TEntity GetById<TEntity>(long id) where TEntity : class;
+    TEntity? GetById<TEntity>(long id) where TEntity : class;
     List<string> GetChangedProperties<TEntity>(TEntity originalEntity, TEntity newEntity) where TEntity : class;
 }

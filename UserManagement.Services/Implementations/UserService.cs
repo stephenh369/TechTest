@@ -38,10 +38,11 @@ public class UserService : IUserService
             ActionDate = DateTime.Now,
         });
     }
-    public User GetById(long id) => _dataAccess.GetById<User>(id);
+    public User GetById(long id) => _dataAccess.GetById<User>(id) ?? throw new Exception($"User with ID {id} not found");
     public void Edit(User updatedUser)
     {
-        var changes = _dataAccess.GetChangedProperties(_dataAccess.GetById<User>(updatedUser.Id), updatedUser);
+        var existingUser = _dataAccess.GetById<User>(updatedUser.Id) ?? throw new Exception($"User with ID {updatedUser.Id} not found");
+        var changes = _dataAccess.GetChangedProperties(existingUser, updatedUser);
 
         if (!changes.Any()) return;
 
